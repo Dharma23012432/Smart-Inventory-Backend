@@ -17,6 +17,7 @@ public class CorsConfig {
                         .allowedOrigins(
                                 "http://localhost:5173",
                                 "http://smart-inventory-system.s3-website.ap-south-1.amazonaws.com",
+                                "https://smart-inventory-system.s3-website.ap-south-1.amazonaws.com",
                                 "https://d16noyp4jk2rr.cloudfront.net"
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
