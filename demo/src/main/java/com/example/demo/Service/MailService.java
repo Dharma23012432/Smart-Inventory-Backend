@@ -74,4 +74,16 @@ public class MailService {
             return false;
         }
     }
+
+    public boolean sendLowStockEmail(String productName, String supplierMail, int currentStock) {
+        String subject = "Low Stock Alert - " + productName;
+        String body =
+                "Dear Supplier,\n\n" +
+                        "Our product \"" + productName + "\" has dropped to " + currentStock + " units.\n" +
+                        "Please send additional stock as soon as possible.\n\n" +
+                        "Regards,\nSmart Inventory System";
+
+        return sendMail(supplierMail, subject, body);
+    }
+
 }
