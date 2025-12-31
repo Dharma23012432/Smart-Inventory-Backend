@@ -45,10 +45,10 @@ public class ProductService {
                             product.getSupplier().getEmail()
             );
 
-            mailService.sendLowStockEmail(
-                    product.getName(),
-                    product.getSupplier().getEmail(),
-                    newProduct
+            mailService.sendLowStockEmailAsync(
+                product.getName(),
+                product.getSupplier().getEmail(),
+                newProduct
             );
         }
     }
