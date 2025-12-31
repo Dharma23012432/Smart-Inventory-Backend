@@ -7,17 +7,21 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class CorsConfig {
+
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        // allow local dev ports for Vite (5173, 5174, etc.)
-                        .allowedOriginPatterns("http://localhost:*",
-                        "https://smart-inventory-backend-1.onrender.com")
+                        .allowedOrigins(
+                                "http://localhost:5173",
+                                "http://smart-inventory-system.s3-website.ap-south-1.amazonaws.com",
+                                "https://d16noyp4jk2rr.cloudfront.net"
+                        )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowCredentials(true);
+                        .allowedHeaders("*")
+                        .allowCredentials(false);
             }
         };
     }
