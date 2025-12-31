@@ -75,7 +75,7 @@ public class MailService {
         }
     }
 
-    public boolean sendLowStockEmail(String productName, String supplierMail, int currentStock) {
+    public void sendLowStockEmail(String productName, String supplierMail, int currentStock) {
         String subject = "Low Stock Alert - " + productName;
         String body =
                 "Dear Supplier,\n\n" +
@@ -83,7 +83,7 @@ public class MailService {
                         "Please send additional stock as soon as possible.\n\n" +
                         "Regards,\nSmart Inventory System";
 
-        return sendMail(supplierMail, subject, body);
+        sendMail(supplierMail, subject, body);
     }
 
 }
