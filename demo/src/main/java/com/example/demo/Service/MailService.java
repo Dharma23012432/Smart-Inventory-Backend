@@ -5,10 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MailService {
+
     private final JavaMailSender javaMailSender;
     private final Logger log = LoggerFactory.getLogger(MailService.class);
 
@@ -16,66 +18,60 @@ public class MailService {
         this.javaMailSender = javaMailSender;
     }
 
+    // ---------------- BASIC SEND ----------------
     public boolean sendMail(String to, String subject, String body) {
         try {
             SimpleMailMessage msg = new SimpleMailMessage();
-            msg.setFrom("smkd3081@gmail.com"); // optional
+            msg.setFrom("smkd3081@gmail.com");
             msg.setTo(to);
             msg.setSubject(subject);
             msg.setText(body);
+
             javaMailSender.send(msg);
             log.info("Mail sent to {}", to);
             return true;
+
         } catch (MailException ex) {
-            // log full stack (debug) and short message for info
-            log.error("Failed to send email to {} — cause: {}", to, ex.getMessage());
-            log.debug("Mail exception stacktrace:", ex);
+            log.error("Mail failed to {} — {}", to, ex.getMessage());
+            log.debug("Stacktrace:", ex);
             return false;
         }
     }
 
-    public boolean sendLowStockEmail(String productName, String supplierMail, int currentStock) {
-        String subject = "Low Stock Alert - " + productName;
-        String body = "Dear Supplier,\n\n"
-                + "Our product \"" + productName + "\" has dropped to " + currentStock + " units.\n"
-                + "Please send additional stock as soon as possible.\n\n"
-                + "Regards,\nSmart Inventory System";
-
-        return sendMail(supplierMail, subject, body);
+    // ---------------- ASYNC INVOICE ----------------
+    @Async
+    public void sendInvoiceAsync(String to, String subject, String body) {
+        sendMail(to, subject, body);
     }
-        public boolean testMailConnection() {
+
+    // ---------------- ASYNC LOW STOCK ----------------
+    @Async
+    public void sendLowStockEmailAsync(String productName, String supplierMail, int currentStock) {
+        String subject = "Low Stock Alert - " + productName;
+        String body =
+                "Dear Supplier,\n\n" +
+                "Product \"" + productName + "\" is low on stock.\n" +
+                "Current stock: " + currentStock + "\n\n" +
+                "Please restock soon.\n\n" +
+                "Regards,\nSmart Inventory System";
+
+        sendMail(supplierMail, subject, body);
+    }
+
+    // ---------------- SMTP TEST ----------------
+    public boolean testMailConnection() {
         try {
-            // Create a simple test message
             SimpleMailMessage msg = new SimpleMailMessage();
-            msg.setTo("dlingam850@gmail.com"); // use your own email
+            msg.setTo("dlingam850@gmail.com");
             msg.setSubject("SMTP Test - Smart Inventory");
-            msg.setText("✅ Your SMTP connection is working fine!");
+            msg.setText("✅ SMTP connection working");
 
             javaMailSender.send(msg);
-            System.out.println("✅ Test mail sent successfully!");
             return true;
+
         } catch (Exception e) {
-            System.err.println("❌ Test mail failed: " + e.getMessage());
+            log.error("SMTP test failed", e);
             return false;
         }
     }
 }
-
-//    public boolean testMailConnection() {
-//        try {
-//            // Create a simple test message
-//            SimpleMailMessage msg = new SimpleMailMessage();
-//            msg.setTo("dlingam850@gmail.com"); // use your own email
-//            msg.setSubject("SMTP Test - Smart Inventory");
-//            msg.setText("✅ Your SMTP connection is working fine!");
-//
-//            javaMailSender.send(msg);
-//            System.out.println("✅ Test mail sent successfully!");
-//            return true;
-//        } catch (Exception e) {
-//            System.err.println("❌ Test mail failed: " + e.getMessage());
-//            return false;
-//        }
-//    }
-
-
