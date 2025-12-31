@@ -40,14 +40,16 @@ public class ProductService {
         System.out.println("Updating stock for " + product.getName() + " | New Stock: " + newProduct);
 
         if (newProduct < product.getMinStock()) {
-            System.out.println("Stock below minStock! Sending email to: " + product.getSupplier().getEmail());
+            System.out.println(
+                    "Stock below minStock! Sending email to " +
+                            product.getSupplier().getEmail()
+            );
+
             mailService.sendLowStockEmail(
                     product.getName(),
                     product.getSupplier().getEmail(),
                     newProduct
             );
-        } else {
-            System.out.println("Stock is sufficient. No mail sent.");
         }
     }
 
